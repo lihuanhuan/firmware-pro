@@ -82,16 +82,19 @@ async def reset_device(ctx: wire.Context, msg: ResetDevice) -> Success:
         # For SLIP-39 this is the Encrypted Master Secret
         secret = _compute_secret_from_entropy(int_entropy, ext_entropy, msg.strength)
 
+        identifier = None
+        iteration_exponent = None
+
         # Check backup type, perform type-specific handling
         if msg.backup_type == BackupType.Bip39:
             # in BIP-39 we store mnemonic string instead of the secret
             secret = bip39.from_data(secret).encode()
         elif msg.backup_type in (BackupType.Slip39_Basic, BackupType.Slip39_Advanced):
             # generate and set SLIP39 parameters
-            storage.device.set_slip39_identifier(slip39.generate_random_identifier())
-            storage.device.set_slip39_iteration_exponent(
-                slip39.DEFAULT_ITERATION_EXPONENT
-            )
+            identifier = slip39.generate_random_identifier()
+            iteration_exponent = slip39.DEFAULT_ITERATION_EXPONENT
+            storage.device.set_slip39_identifier(identifier)
+            storage.device.set_slip39_iteration_exponent(iteration_exponent)
         else:
             # Unknown backup type.
             raise RuntimeError
@@ -118,6 +121,8 @@ async def reset_device(ctx: wire.Context, msg: ResetDevice) -> Success:
             msg.backup_type,
             needs_backup=not perform_backup,
             no_backup=bool(msg.no_backup),
+            identifier=identifier,
+            iteration_exponent=iteration_exponent,
         )
         # if we backed up the wallet, show success message
         # if perform_backup:
