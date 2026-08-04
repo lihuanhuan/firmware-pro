@@ -416,7 +416,9 @@ async def handle_UnlockPath(ctx: wire.Context, msg: UnlockPath) -> protobuf.Mess
 
     if utils.USE_THD89:
         from trezor.crypto import se_thd89
+        from apps.common.seed import get_seed
 
+        await get_seed(ctx)
         expected_mac = se_thd89.slip21_slip25_mac()
     else:
         from trezor.crypto import hmac
