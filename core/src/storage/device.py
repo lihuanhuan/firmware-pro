@@ -864,6 +864,10 @@ def get_wp_cnts() -> int:
 
 def get_fido2_counter() -> int:
     global _FIDO2_COUNTER_VALUE
+    if utils.USE_THD89:
+        from trezor.crypto import se_thd89
+
+        return len(se_thd89.fido_resident_credentials_list())
     if _FIDO2_COUNTER_VALUE is None:
         counter = common.get(_NAMESPACE, _FIDO2_COUNTER, public=True)
         if counter is None:
@@ -883,6 +887,8 @@ def get_fido2_counter() -> int:
 
 def set_fido2_counter(value: int) -> None:
     global _FIDO2_COUNTER_VALUE
+    if utils.USE_THD89:
+        raise RuntimeError("FIDO credentials are managed by the secure element")
     from .resident_credentials import MAX_RESIDENT_CREDENTIALS
 
     assert (

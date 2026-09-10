@@ -329,32 +329,45 @@ def fido_att_sign_digest(
 
 
 # extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
-def fido_credential_encrypt(rp_id_hash: bytes, plaintext: bytes) -> bytes:
-    """Encrypt a SLIP-0022 credential ID inside the secure element."""
+def fido_credential_create(plaintext: bytes, resident: bool) -> tuple[bytes, int, int]:
+    """Create a FIDO credential ID in the secure element."""
 
 
 # extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
-def fido_credential_peek(credential_id: bytes) -> bytes:
-    """Tentatively decrypt a credential for legacy RP-ID discovery."""
-
-
-# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
-def fido_credential_decrypt(
-    rp_id_hash: bytes, credential_id: bytes
+def fido_credential_validate(
+    credential_id: bytes, rp_id_hash: bytes | None
 ) -> bytes:
-    """Authenticate and decrypt a SLIP-0022 credential ID."""
+    """Authenticate a credential ID and return its CBOR plaintext."""
+
+
+# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
+def fido_resident_credentials_list() -> tuple[int, ...]:
+    """Return occupied resident credential slot indexes."""
+
+
+# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
+def fido_resident_credential_read(index: int) -> tuple[bytes, bytes]:
+    """Read one authenticated resident credential."""
+
+
+# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
+def fido_resident_credential_import(credential_id: bytes) -> tuple[int, int]:
+    """Store an authenticated external credential ID."""
+
+
+# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
+def fido_resident_credential_delete(index: int) -> None:
+    """Delete one resident credential slot."""
+
+
+# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
+def fido_resident_credentials_clear() -> None:
+    """Clear every resident credential slot."""
 
 
 # extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
 def fido_hmac_secret(credential_id: bytes, salt: bytes) -> bytes:
     """Return the purpose-bound hmac-secret output for one or two salts."""
-
-
-# extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
-def fido_delete_all_credentials() -> None:
-    """
-    Delete all FIDO2 credentials.
-    """
 
 
 # extmod/modtrezorcrypto/modtrezorcrypto-se-thd89.h
